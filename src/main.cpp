@@ -14,8 +14,6 @@ int main(int argc, char *argv[])
     }
     
     std::string command = argv[1];
-    //temp debg script
-    std::cout << "Command received: " << command << "\n";
     if (command == "init")
     {
         return initCommand();
