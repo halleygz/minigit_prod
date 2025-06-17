@@ -4,6 +4,7 @@
 
 int initCommand();
 int addCommand(const std::string& filename);
+int commitCommand(const std::string& message);
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +26,15 @@ int main(int argc, char *argv[])
         }
 
         return addCommand(argv[2]);
+    } else if(command == "commit"){
+        std::string message;
+        if(argc >= 4 && std::string(argv[2]) == "-m"){
+            message = argv[3];
+        } else {
+            std:: cerr << "Usage: minigit commit -m \"message\"\n";
+            return 1;
+        }
+        return commitCommand(message);
     }
 
 

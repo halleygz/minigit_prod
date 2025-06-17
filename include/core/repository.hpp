@@ -11,6 +11,8 @@ namespace mgit
         static void init();
     public:
         static void add(const std::string& file);
+    public:
+        static int commit(const std::string& message);
     };
 }
 
