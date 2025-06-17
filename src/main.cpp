@@ -3,6 +3,7 @@
 
 
 int initCommand();
+int addCommand(const std::string& filename);
 
 int main(int argc, char *argv[])
 {
@@ -17,7 +18,15 @@ int main(int argc, char *argv[])
     if (command == "init")
     {
         return initCommand();
+    } else if (command == "add"){
+        if(argc < 3) {
+            std::cerr<< "Usage: minigit add <file>\n";
+            return 1;
+        }
+
+        return addCommand(argv[2]);
     }
+
 
     std::cout << "Unknown command: " << command << "\n";
     return 1;

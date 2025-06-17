@@ -1,3 +1,4 @@
+#include <string>
 #ifndef REPOSITORY_HPP
 #define REPOSITORY_HPP
 
@@ -8,6 +9,8 @@ namespace mgit
     {
     public:
         static void init();
+    public:
+        static void add(const std::string& file);
     };
 }
 
