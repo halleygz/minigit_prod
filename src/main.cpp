@@ -5,6 +5,7 @@
 int initCommand();
 int addCommand(const std::string& filename);
 int commitCommand(const std::string& message);
+int logCommits();
 
 int main(int argc, char *argv[])
 {
@@ -35,6 +36,8 @@ int main(int argc, char *argv[])
             return 1;
         }
         return commitCommand(message);
+    } else if (command == "log") {
+        return logCommits();
     }
 
 

@@ -16,6 +16,56 @@ namespace mgit
     std::string getCurrentTimeStamp();
     std::string generateHash(const std::string &content);
 
+    Repository::Repository()
+    {
+        mgitDir = ".minigit";
+        commitsDir = mgitDir + "/commits";
+        headFile = mgitDir + "/HEAD";
+    }
+
+    bool Repository::isInitialized()
+    {
+        return (fs::exists(mgitDir) && fs::exists(commitsDir) && fs::exists(headFile));
+    }
+
+    Commit Repository::getHeadCommit()
+    {
+        if (!fs::exists(headFile))
+        {
+            return {};
+        }
+
+        std::string headId = readFile(headFile);
+        std::string path = commitsDir + "/" + headId + ".json";
+
+        return fs::exists(path) ? loadCommitFromFile(path) : Commit{};
+    }
+
+    Commit Repository::getCommitById(const std::string &hash)
+    {
+        std::string path = commitsDir + "/" + hash + ".json";
+        return fs::exists(path) ? loadCommitFromFile(path) : Commit{};
+    }
+
+    std::string Repository::readFile(const std::string &path) const
+    {
+        std::ifstream in(path);
+        if (!in)
+            return "";
+        std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+        return content;
+    }
+
+    Commit Repository::loadCommitFromFile(const std::string &path) const
+    {
+        std::ifstream in(path);
+        if (!in)
+            return Commit{};
+
+        std::string content((std::istreambuf_iterator<char>(in)), std::istreambuf_iterator<char>());
+        return Commit::deserialize(content);
+    }
+
     void Repository::init()
     {
         try
@@ -66,39 +116,39 @@ namespace mgit
     }
 
     int Repository::commit(const std::string &message)
+{
+    mgit::Repository repo;
+
+    Commit currHEAD = repo.getHeadCommit();
+    std::string currHEADHash = currHEAD.hash;
+
+    std::ifstream staging(".minigit/staging_area.json");
+    json staged_files_json;
+    staging >> staged_files_json;
+
+    std::map<std::string, std::string> files;
+    for (auto &[fname, blob] : staged_files_json.items())
     {
-        std::string branch;
-        std::ifstream("./minigit/HEAD") >> branch;
-
-        std::string branch_path = "./minigit/branches/" + branch;
-        std::ifstream branch_file(branch_path);
-        std::string parent_commit;
-        branch_file >> parent_commit;
-
-        std::ifstream staging(".minigit/staging_area.json");
-        json staged_files_json;
-        staging >> staged_files_json;
-
-        std::map<std::string, std::string> files;
-        for (auto &[fname, blob] : staged_files_json.items())
-        {
-            files[fname] = blob;
-        }
-
-        Commit commit;
-        commit.parent = parent_commit;
-        commit.message = message;
-        commit.timestamp = getCurrentTimeStamp();
-        commit.files = files;
-
-        std::string content = commit.serialize();
-        commit.hash = generateHash(content);
-
-        std::ofstream(".minigit/commits/" + commit.hash + ".json") << content;
-        std::ofstream(branch_path) << commit.hash;
-
-        std::ofstream(".minigit/staging_area.json") << "{}";
-        std::cout << "Commited as " << commit.hash << "\n";
-        return 0;
+        files[fname] = blob;
     }
+
+    Commit commit;
+    commit.parent = currHEADHash;             
+    commit.message = message;                 
+    commit.timestamp = getCurrentTimeStamp(); 
+    commit.files = files;                    
+
+    std::string content = commit.serialize();
+    commit.hash = generateHash(content);
+
+    content = commit.serialize();
+
+    std::ofstream(".minigit/HEAD") << commit.hash;
+    std::ofstream(".minigit/commits/" + commit.hash + ".json") << content;
+
+    std::ofstream(".minigit/staging_area.json") << "{}";
+
+    std::cout << "Committed as " << commit.hash << "\n";
+    return 0;
+}
 }
