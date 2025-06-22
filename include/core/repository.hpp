@@ -16,6 +16,7 @@ namespace mgit
         bool isInitialized();
         Commit getHeadCommit();
         Commit getCommitById(const std::string& hash);
+        std::string getHeadBranch();
         
     public:
         static void init();
@@ -30,6 +31,7 @@ namespace mgit
         std::string mgitDir;
         std:: string commitsDir;
         std::string headFile;
+        std::string branchesDir;
 
         std::string readFile(const std::string& path) const;
         Commit loadCommitFromFile(const std::string& path) const;
