@@ -6,6 +6,9 @@ int initCommand();
 int addCommand(const std::string& filename);
 int commitCommand(const std::string& message);
 int logCommits();
+bool createBranch(const std::string& branchName);
+bool checkout(const std::string& branchName);
+bool createAndCheckout(const std::string& branchName);
 
 int main(int argc, char *argv[])
 {
@@ -38,6 +41,21 @@ int main(int argc, char *argv[])
         return commitCommand(message);
     } else if (command == "log") {
         return logCommits();
+    } else if(command == "branch") {
+         if(argc < 3) {
+            std::cerr<< "Usage: minigit branch <branchName>\n";
+            return 1;
+        }
+        return createBranch(argv[2]);       
+    } else if (command == "checkout") {
+        if (argc >= 4 && std::string(argv[2]) == "-b") {
+            return createAndCheckout(argv[3]);
+        } else if (argc >= 3) {
+            return checkout(argv[2]);
+        } else {
+            std::cerr << "Usage: minigit checkout [-b] <branchName>\n";
+            return 1;
+        }
     }
 
 
