@@ -32,19 +32,13 @@ namespace mgit
     Commit Repository::getHeadCommit()
     {
         std::string headB = getHeadBranch();
-
         if (headB.empty())
         {
             return {};
         }
-
+        
         std::string headId = readFile(headB);
-        if (!fs::exists(headId))
-        {
-            return {};
-        }
         std::string path = commitsDir + "/" + headId + ".json";
-
         return fs::exists(path) ? loadCommitFromFile(path) : Commit{};
     }
 
