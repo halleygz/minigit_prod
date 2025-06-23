@@ -9,6 +9,8 @@ int logCommits();
 bool createBranch(const std::string& branchName);
 bool checkout(const std::string& branchName);
 bool createAndCheckout(const std::string& branchName);
+bool merge(const std::string& branchName);
+bool pull(const std::string& branchName);
 
 int main(int argc, char *argv[])
 {
@@ -56,6 +58,18 @@ int main(int argc, char *argv[])
             std::cerr << "Usage: minigit checkout [-b] <branchName>\n";
             return 1;
         }
+    } else if(command == "merge") {
+        if(argc< 3) {
+            std::cerr<<"Usage: minigit merge <branchName> \n";
+            return 1;
+        }
+        return merge(argv[2]);
+    } else if (command == "pull"){
+        if(argc < 3) {
+            std::cerr<<"Usage: minigit pull <branchName> \n";
+            return 1;
+        }
+        return pull(argv[2]);
     }
 
 
