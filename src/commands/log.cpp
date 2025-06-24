@@ -1,9 +1,11 @@
+#include "core/commit.hpp"
 #include "core/repository.hpp"
 #include <iostream>
 
 int logCommits()
 {
     mgit::Repository repo;
+    mgit::Commit commit;
 
     if (!repo.isInitialized())
     {
@@ -11,7 +13,7 @@ int logCommits()
         return 1;
     }
 
-    mgit::Commit current = repo.getHeadCommit();
+    mgit::CommitStruct current = commit.getHeadCommit();
     while (!current.hash.empty())
     {
         std::cout << "commit: " << current.hash << "\n";
@@ -27,7 +29,7 @@ int logCommits()
         if (current.parent.empty())
             break;
 
-        current = repo.getCommitById(current.parent);
+        current = commit.getCommitById(current.parent);
     }
 
     return 0;

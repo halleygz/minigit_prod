@@ -12,6 +12,8 @@ namespace fs = filesystem;
 namespace mgit
 {
     Repository repo;
+    Commit commit;
+    
     Merge::Merge()
     {
         mgitDir = ".minigit";
@@ -36,7 +38,7 @@ namespace mgit
 
     bool Merge::backTrackCheck(const string &fromCommitHash, const string &toCommitHash)
     {
-        Commit current = repo.getCommitById(fromCommitHash);
+        CommitStruct current = commit.getCommitById(fromCommitHash);
 
         while (!current.hash.empty())
         {
@@ -44,7 +46,7 @@ namespace mgit
             {
                 return true;
             }
-        current = repo.getCommitById(current.parent);
+        current = commit.getCommitById(current.parent);
         }
         return false;
     }
